@@ -1,1 +1,1 @@
-# Ink React 
+# Terminal APP
