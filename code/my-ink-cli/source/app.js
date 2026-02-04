@@ -9,11 +9,11 @@ export default function App() {
 			<AsciiLogo />
 			<Box marginBottom={1}>
 				<Text bold color="white">
-					Welcome to vis web
+					Welcome to DainAI
 				</Text>
 			</Box>
 			<Box marginBottom={2}>
-				<Text dimColor>Build and preview your site in the terminal.</Text>
+				<Text dimColor>Ask AI anything.</Text>
 			</Box>
 			<MenuButtons />
 		</Box>

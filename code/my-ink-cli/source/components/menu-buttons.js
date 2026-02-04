@@ -1,5 +1,10 @@
 import React, {useState} from 'react';
 import {Box, Text, useInput, useApp} from 'ink';
+import TextInput from 'ink-text-input';
+import OpenAI from "openai";
+const client = new OpenAI();
+
+
 
 const BUTTONS = [
 	{id: 'start', label: 'Start'},
@@ -26,13 +31,34 @@ const PAGES = {
 export default function MenuButtons() {
 	const [selected, setSelected] = useState(0);
 	const [page, setPage] = useState(null);
+	const [inputValue, setInputValue] = useState('');
+	const [response, setResponse] = useState('');
+	const [loading, setLoading] = useState(false);
 	const {exit} = useApp();
+
+	const handleSubmit = async (value) => {
+		if (!value.trim()) return;
+		setLoading(true);
+		setResponse('');
+		try {
+			const result = await client.responses.create({
+				model: "gpt-4o-mini",
+				input: value
+			});
+			setResponse(result.output_text);
+		} catch (error) {
+			setResponse('Error: ' + error.message);
+		}
+		setLoading(false);
+	};
 
 	useInput((input, key) => {
 		if (page) {
 			// On a sub-page: Escape or b = back to menu
-			if (input === 'b' || key.escape) {
+			if (key.escape || (input === 'b' && page !== 'start')) {
 				setPage(null);
+				setInputValue('');
+				setResponse('');
 			}
 			return;
 		}
@@ -57,6 +83,42 @@ export default function MenuButtons() {
 			}
 		}
 	});
+
+	// Start page with input
+	if (page === 'start') {
+		return (
+			<Box flexDirection="column" alignItems="center" paddingX={2}>
+				<Box marginBottom={1}>
+					<Text bold color="cyan">
+						Ask AI
+					</Text>
+				</Box>
+				<Box marginBottom={1}>
+					<Text>{'> '}</Text>
+					<TextInput
+						value={inputValue}
+						onChange={setInputValue}
+						onSubmit={handleSubmit}
+						placeholder="Type your message..."
+					/>
+				</Box>
+				{loading && (
+					<Box marginY={1}>
+						<Text color="yellow">Loading...</Text>
+					</Box>
+				)}
+				{response && (
+					<Box marginY={1} flexDirection="column">
+						<Text bold color="green">Response:</Text>
+						<Text>{response}</Text>
+					</Box>
+				)}
+				<Box marginTop={1}>
+					<Text dimColor>Enter to send · Esc to go back</Text>
+				</Box>
+			</Box>
+		);
+	}
 
 	// Sub-page view
 	if (page) {

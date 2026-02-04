@@ -16,8 +16,11 @@
 		"dist"
 	],
 	"dependencies": {
+		"dotenv": "^17.2.3",
 		"ink": "^4.1.0",
+		"ink-text-input": "^5.0.1",
 		"meow": "^11.0.0",
+		"openai": "^6.17.0",
 		"react": "^18.2.0"
 	},
 	"devDependencies": {
