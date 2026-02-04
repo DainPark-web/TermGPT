@@ -1,1 +1,1 @@
-# Terminal APP
+# TermGPT
